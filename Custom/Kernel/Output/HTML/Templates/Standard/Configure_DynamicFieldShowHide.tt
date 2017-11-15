@@ -1,0 +1,60 @@
+# --
+# Custom/Kernel/Output/HTML/Templates/Standard/Configure_DynamicFieldShowHide.tt - Show/Hide Dynamic Fields
+# Copyright (C) 2013 - 2017 i-cron.de, http://i-cron.de
+# Thank you for Otterhub Member "joc8037" for providing the initial code
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+
+    [% WRAPPER JSOnDocumentComplete %]
+    <script type="text/javascript">
+
+
+    // This map defines which dynamic fields should be displayed for each selection of Queue or Ticket Type
+    //   The format is key: [field1, field2, ...] where 'key' corresponds to the SELECT OPTION value and fieldX corresponds to the dynamic field names
+
+	
+    var field_map = {
+///////////////i-cron: START Config Area///////////////////////////////////////////
+	// Start to configure your DynamicFields here:
+	// Use format such as 'QueueID||QueueName': ['DynFieldName1','DynFieldName2'],
+           '1||Postmaster': ['DynFieldName1','DynFieldName2'],
+           '2||Raw': ['DynFieldName1'],
+	// End of configuration. Ignore the rest.
+///////////////i-cron: END Config Area/////////////////////////////////////////////
+    }
+
+    // Trigger on change of Ticket Type (use '#Dest' to use for Queue or '#TypeID' instead)
+    $('#Dest').change(function() {
+//	$('#TypeID').change(function() { # for TypeID
+
+//                window.alert("TEST");
+
+           if ($(this).val() in field_map) {
+                   var enabledFields = field_map[$(this).val()];
+           } else {
+                   var enabledFields = [];
+           }
+
+           // Find all DynamicField row DIVs
+           var dyn_rows = $('div[class*=Row_DynamicField_]');
+           dyn_rows.each(function() {
+                   // Get the full dynamic field class name
+                   var fieldName = this.className.split(' ').filter(function(v,i,a) {return (v.substring(0,17) == 'Row_DynamicField_');})[0].substring(17);
+
+                   if (enabledFields.indexOf(fieldName) >= 0) {
+                           $(this).show();
+                   } else {
+                           $(this).hide();
+                   }
+           });
+    });
+
+    // Simulate an initial change to trigger the dynamic display on page load
+    $('#Dest').change();
+//	$('#TypeID').change();	# for TypeID
+
+    </script>
+    [% END %]
